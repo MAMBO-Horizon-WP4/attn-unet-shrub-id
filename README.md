@@ -46,7 +46,7 @@ This repository provides a PyTorch implementation of the Attention UNet architec
 To train the Attention UNet model, use the `train_model.py` script:
 
 ```bash
-python scripts/train_model.py \
+python scripts/run_training.py \
     --images_dir data/train/images \
     --labels_dir data/train/labels \
     --output_path model/trained_model.pth \
@@ -103,7 +103,7 @@ attention-unet/
 │   ├── inference.py       # Inference logic
 │   ├── utils.py           # Helper functions (e.g., metrics)
 ├── scripts/
-│   ├── train_model.py     # Training script
+│   ├── run_training.py    # Training script
 │   ├── run_inference.py   # Inference script
 ├── data/                  # Folder for storing datasets (not included)
 ├── notebooks/             # Jupyter notebooks for experiments
