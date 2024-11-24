@@ -50,6 +50,7 @@ python scripts/train_model.py \
     --images_dir data/train/images \
     --labels_dir data/train/labels \
     --output_path model/trained_model.pth \
+    --model_path model/pre_trained_model.pth \
     --epochs 50 \
     --batch_size 16 \
     --learning_rate 0.0001
@@ -59,6 +60,7 @@ python scripts/train_model.py \
 - `--images_dir`: Path to the directory containing input images.
 - `--labels_dir`: Path to the directory containing ground truth masks.
 - `--output_path`: Path to save the trained model.
+- `--model_path`: Path to pre-existing trained model (if desired)
 - `--epochs`: Number of training epochs (default: 50).
 - `--batch_size`: Batch size for training (default: 16).
 - `--learning_rate`: Learning rate for the optimizer (default: 0.0001).
@@ -85,29 +87,6 @@ python scripts/run_inference.py \
 - `--window_size`: Sliding window size for tile-based inference (default: 512).
 - `--step_size`: Step size for sliding the window (default: 256).
 - `--threshold`: Threshold for binary segmentation (default: 0.5).
-
----
-
-### Fine-Tuning
-To fine-tune an existing model with new samples:
-
-1. Load the existing model and new data
-```python
-from src.model import AttentionUNet
-import torch
-
-model = AttentionUNet(img_ch=3, output_ch=1)
-model.load_state_dict(torch.load("trained_model.pth"))
-```
-
-Train on the new dataset with a reduced learning rate:
-```bash
-python scripts/train_model.py \
-    --images_dir /path/to/new/images \
-    --labels_dir /path/to/new/labels \
-    --output_path fine_tuned_model.pth \
-    --learning_rate 0.00001
-```
 
 ---
 
