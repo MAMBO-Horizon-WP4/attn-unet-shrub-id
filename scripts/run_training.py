@@ -26,6 +26,8 @@ def main(args):
 
     # Initialize model
     model = AttentionUNet(img_ch=3, output_ch=1)
+    if args.model_path:
+        model.load_state_dict(torch.load(args.model_path))
 
     # Train the model
     trained_model = train_model(
@@ -47,7 +49,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train Attention UNet")
     parser.add_argument("--images_dir", required=True, help="Path to images directory")
     parser.add_argument("--labels_dir", required=True, help="Path to labels directory")
-    parser.add_argument("--output_path", default="attention_unet.pth", help="Path to save the trained model")
+    parser.add_argument("--output_path", default="att_unet_trained.pth", help="Path to save the trained model")
+    parser.add_argument("--model_path", default=None, help="Path to pre-existing trained model (if desired)")
     parser.add_argument("--epochs", type=int, default=50, help="Number of training epochs")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
     parser.add_argument("--learning_rate", type=float, default=0.0001, help="Learning rate")
