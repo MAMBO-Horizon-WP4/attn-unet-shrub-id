@@ -60,7 +60,7 @@ python scripts/train_model.py \
 - `--images_dir`: Path to the directory containing input images.
 - `--labels_dir`: Path to the directory containing ground truth masks.
 - `--output_path`: Path to save the trained model.
-- `--model_path`: Path to pre-existing trained model (if desired)
+- `--model_path`: Path to pre-existing trained model, if desired (default: None).
 - `--epochs`: Number of training epochs (default: 50).
 - `--batch_size`: Batch size for training (default: 16).
 - `--learning_rate`: Learning rate for the optimizer (default: 0.0001).
