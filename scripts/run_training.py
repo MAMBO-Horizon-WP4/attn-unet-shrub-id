@@ -26,8 +26,14 @@ def main(args):
 
     # Initialize model
     model = AttentionUNet(img_ch=3, output_ch=1)
+
+    # Load pretrained weights if provided
     if args.model_path:
-        model.load_state_dict(torch.load(args.model_path))
+        print(f"Loading model weights from {args.model_path}")
+        checkpoint = torch.load(args.model_path, 
+                                map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+                                )
+        model.load_state_dict(checkpoint)  
 
     # Train the model
     trained_model = train_model(
