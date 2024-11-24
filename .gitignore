@@ -1,0 +1,20 @@
+# Ignore all files and subdirectories in the data/ folder
+data/*
+
+# Allow README.md or any documentation files
+!data/*.md
+
+# Allow example datasets
+!data/example_*
+
+# Ignore any temporary or cache files
+data/**/*.tmp
+data/**/*.cache
+data/**/*.log
+
+# Ignore system files
+data/.DS_Store
+data/Thumbs.db
+
+# Ignore model state files
+/model/*
