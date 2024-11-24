@@ -115,6 +115,7 @@ python scripts/train_model.py \
 
 The project is structured as follows:
 
+```
 attention-unet/
 ├── src/
 │   ├── dataset.py         # Dataset handling
@@ -130,6 +131,7 @@ attention-unet/
 ├── tests/                 # Unit and integration tests
 ├── README.md              # Project documentation
 ├── requirements.txt       # Dependencies
+```
 
 ---
 
