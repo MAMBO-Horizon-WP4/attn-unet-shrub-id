@@ -33,7 +33,8 @@ class RSDataset(Dataset):
         image = image / 255.0
 
         # Normalize label to [0, 1]
-        label = label / 255.0
+        if label.max()==255:
+            label = label / 255.0
 
         # Add channel dimension to label
         label = np.expand_dims(label, axis=0)
