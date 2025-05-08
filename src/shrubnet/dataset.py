@@ -1,9 +1,9 @@
 import os
 import torch
 from torch.utils.data import Dataset
-from torchvision import transforms
 import numpy as np
 from PIL import Image
+
 
 class RSDataset(Dataset):
     def __init__(self, images_dir, labels_dir, transform=None, max_samples=None):
@@ -33,7 +33,7 @@ class RSDataset(Dataset):
         image = image / 255.0
 
         # Normalize label to [0, 1]
-        if label.max()==255:
+        if label.max() == 255:
             label = label / 255.0
 
         # Add channel dimension to label

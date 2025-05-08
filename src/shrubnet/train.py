@@ -72,7 +72,9 @@ def train_model(
 
             # Check if labels are in the correct range
             if labels.max() > 1 or labels.min() < 0:
-                raise ValueError(f"Labels out of bounds: min={labels.min()}, max={labels.max()}")
+                raise ValueError(
+                    f"Labels out of bounds: min={labels.min()}, max={labels.max()}"
+                )
 
             # Calculate loss
             loss = criterion(outputs, labels)
