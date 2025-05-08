@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shrubnet"
+version = "0.1.0"
+requires-python = ">=3.9"
+description = "Training and reusing an Attention Unet to extract shrub outlines from aerial imagery"
+readme = "README.md"
+dependencies = [
+    "s3fs",
+    "torch",
+    "torchvision",
+    "numpy",
+    "scikit-learn",
+    "tqdm",
+    "gdal"
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+addopts = "--cov=shrubnet"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
