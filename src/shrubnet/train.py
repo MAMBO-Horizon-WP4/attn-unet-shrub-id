@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from tqdm import tqdm
-from src.utils import calculate_metrics, calculate_accuracy, compute_iou
+from shrubnet.utils import calculate_metrics, calculate_accuracy, compute_iou
 
 
 def train_model(

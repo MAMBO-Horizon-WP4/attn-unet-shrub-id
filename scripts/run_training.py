@@ -7,9 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 import argparse
 import torch
 from torch.utils.data import random_split
-from src.model import AttentionUNet
-from src.dataset import RSDataset
-from src.train import train_model
+from shrubnet.model import AttentionUNet
+from shrubnet.dataset import RSDataset
+from shrubnet.train import train_model
 
 def main(args):
     # Load dataset
