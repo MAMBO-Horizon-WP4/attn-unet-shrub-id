@@ -1,0 +1,4 @@
+# E203 is whitespace before :
+[flake8]
+ignore = E203
+max-line-length = 120

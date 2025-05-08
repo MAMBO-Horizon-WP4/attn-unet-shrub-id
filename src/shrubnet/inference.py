@@ -1,14 +1,15 @@
-import os
 import torch
 import numpy as np
 from osgeo import gdal
 from torchvision.transforms.functional import to_tensor
 import cv2
 
+
 def sliding_window(image, step_size, window_size):
     for y in range(0, image.shape[1] - window_size[1] + 1, step_size[1]):
         for x in range(0, image.shape[2] - window_size[0] + 1, step_size[0]):
-            yield (x, y, image[:, y:y + window_size[1], x:x + window_size[0]])
+            yield (x, y, image[:, y : y + window_size[1], x : x + window_size[0]])
+
 
 def run_inference(
     model,
@@ -38,21 +39,21 @@ def run_inference(
     model.to(device)
 
     rsdataset = gdal.Open(input_image_path)
-    images = np.stack([rsdataset.GetRasterBand(i).ReadAsArray() for i in range(1, 4)], axis=0)
+    images = np.stack(
+        [rsdataset.GetRasterBand(i).ReadAsArray() for i in range(1, 4)], axis=0
+    )
     images = images / 255.0  # Normalize
 
     stitched_image = np.zeros((images.shape[1], images.shape[2]), dtype=np.uint8)
 
     # Calculate the total number of tiles for progress tracking
-    total_tiles = (
-        (images.shape[1] - window_size[1]) // step_size[1] + 1
-    ) * (
+    total_tiles = ((images.shape[1] - window_size[1]) // step_size[1] + 1) * (
         (images.shape[2] - window_size[0]) // step_size[0] + 1
     )
     processed_tiles = 0
 
     # Sliding window inference
-    for (x, y, window) in sliding_window(images, step_size, window_size):
+    for x, y, window in sliding_window(images, step_size, window_size):
         # Resize the window to the model's input size
         resized_window = cv2.resize(window.transpose(1, 2, 0), (256, 256))
         window_tensor = to_tensor(resized_window).unsqueeze(0).float().to(device)
@@ -64,18 +65,26 @@ def run_inference(
             prediction = (output > threshold).astype(np.uint8)
 
         # Stitch the prediction into the output image
-        stitched_image[y:y + window_size[1], x:x + window_size[0]] = np.maximum(
-            stitched_image[y:y + window_size[1], x:x + window_size[0]], prediction
+        stitched_image[y : y + window_size[1], x : x + window_size[0]] = np.maximum(
+            stitched_image[y : y + window_size[1], x : x + window_size[0]], prediction
         )
-        
+
         # Update progress
         processed_tiles += 1
         progress = (processed_tiles / total_tiles) * 100
-        print(f"Progress: {processed_tiles}/{total_tiles} tiles processed ({progress:.2f}%)", end="\r")
+        print(
+            f"Progress: {processed_tiles}/{total_tiles} tiles processed ({progress:.2f}%)",
+            end="\r",
+        )
 
-    
     driver = gdal.GetDriverByName("GTiff")
-    out_raster = driver.Create(output_image_path, rsdataset.RasterXSize, rsdataset.RasterYSize, 1, gdal.GDT_Byte)
+    out_raster = driver.Create(
+        output_image_path,
+        rsdataset.RasterXSize,
+        rsdataset.RasterYSize,
+        1,
+        gdal.GDT_Byte,
+    )
     out_raster.SetGeoTransform(rsdataset.GetGeoTransform())
     out_raster.SetProjection(rsdataset.GetProjectionRef())
     out_raster.GetRasterBand(1).WriteArray(stitched_image)

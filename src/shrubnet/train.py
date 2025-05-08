@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from tqdm import tqdm
-from src.utils import calculate_metrics, calculate_accuracy, compute_iou
+from shrubnet.utils import calculate_metrics, calculate_accuracy, compute_iou
 
 
 def train_model(
@@ -72,7 +72,9 @@ def train_model(
 
             # Check if labels are in the correct range
             if labels.max() > 1 or labels.min() < 0:
-                raise ValueError(f"Labels out of bounds: min={labels.min()}, max={labels.max()}")
+                raise ValueError(
+                    f"Labels out of bounds: min={labels.min()}, max={labels.max()}"
+                )
 
             # Calculate loss
             loss = criterion(outputs, labels)

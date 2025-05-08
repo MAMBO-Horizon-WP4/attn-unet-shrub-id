@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from sklearn.metrics import precision_score, recall_score, f1_score
 
+
 def calculate_metrics(predictions, labels, threshold=0.5):
     """
     Calculate precision, recall, and F1 score for binary segmentation.

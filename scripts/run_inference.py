@@ -6,8 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 import argparse
 import torch
-from src.model import AttentionUNet
-from src.inference import run_inference
+from shrubnet.model import AttentionUNet
+from shrubnet.inference import run_inference
 
 def main(args):
     # Load the model
