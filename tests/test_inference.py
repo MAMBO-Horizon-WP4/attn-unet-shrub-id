@@ -7,6 +7,7 @@ import rasterio
 
 def test_inference(input_image_path, tmp_path):
 
+    # Empty model, random weights
     model = AttentionUNet()
     output_image_path = tmp_path / "test.tif"
     run_inference(model, input_image_path, output_image_path)

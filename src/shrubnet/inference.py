@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from osgeo import gdal
+import rasterio
 from torchvision.transforms.functional import to_tensor
 import cv2
 
@@ -38,10 +38,12 @@ def run_inference(
     model.eval()
     model.to(device)
 
-    rsdataset = gdal.Open(input_image_path)
-    images = np.stack(
-        [rsdataset.GetRasterBand(i).ReadAsArray() for i in range(1, 4)], axis=0
-    )
+    with rasterio.open(input_image_path) as src:
+        output_meta = src.meta
+        output_meta["count"] = 1
+        images = src.read()
+
+    # TODO check what normalisation / standardisation was used for training!
     images = images / 255.0  # Normalize
 
     stitched_image = np.zeros((images.shape[1], images.shape[2]), dtype=np.uint8)
@@ -77,16 +79,6 @@ def run_inference(
             end="\r",
         )
 
-    driver = gdal.GetDriverByName("GTiff")
-    out_raster = driver.Create(
-        output_image_path,
-        rsdataset.RasterXSize,
-        rsdataset.RasterYSize,
-        1,
-        gdal.GDT_Byte,
-    )
-    out_raster.SetGeoTransform(rsdataset.GetGeoTransform())
-    out_raster.SetProjection(rsdataset.GetProjectionRef())
-    out_raster.GetRasterBand(1).WriteArray(stitched_image)
-    out_raster.FlushCache()
-    print(f"Prediction saved to {output_image_path}")
+    with rasterio.open(output_image_path, "w", **output_meta) as dst:
+        dst.write(stitched_image, 1)
+        print(f"Prediction saved to {output_image_path}")
