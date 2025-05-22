@@ -15,7 +15,8 @@ dependencies = [
     "numpy",
     "scikit-learn",
     "tqdm",
-    "gdal"
+    "rasterio",
+    "opencv-python"
 ]
 
 [project.optional-dependencies]
@@ -28,7 +29,6 @@ test = [
 package-dir = {"" = "src"}
 
 [tool.pytest.ini_options]
-addopts = "--cov=shrubnet"
 testpaths = ["tests"]
 
 [tool.coverage.run]
