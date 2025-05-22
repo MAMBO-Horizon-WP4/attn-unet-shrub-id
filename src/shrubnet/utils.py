@@ -1,6 +1,10 @@
 import numpy as np
 import cv2
 from sklearn.metrics import precision_score, recall_score, f1_score
+import geopandas as gpd
+import rasterio
+from rasterio import features
+from shapely.geometry import Polygon
 
 
 def calculate_metrics(predictions, labels, threshold=0.5):
@@ -84,3 +88,29 @@ def preprocess_images(images, target_size=(256, 256)):
         processed_images.append(normalized)
 
     return np.array(processed_images)
+
+
+def raster_to_geodataframe(raster: str) -> gpd.GeoDataFrame:
+    """
+    Read a binary raster (shrubs / non-shrubs) and return a dataset with polygons
+
+    Args:
+        raster (string): path to a binary raster
+
+    Returns:
+        a GeoDataFrame
+    """
+
+    with rasterio.open(raster) as src:
+        data = src.read()
+        mask = data != 0
+
+    shapes = features.shapes(data, mask=mask, transform=src.transform)
+
+    geometries = []
+    for geom, _ in shapes:
+        geometries.append(Polygon(geom["coordinates"][0]))
+
+    gdf = gpd.GeoDataFrame({"geometry": geometries})
+    gdf.crs = src.crs
+    return gdf

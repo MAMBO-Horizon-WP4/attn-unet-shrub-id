@@ -3,6 +3,8 @@ from pathlib import Path
 from shrubnet.inference import run_inference, sliding_window
 from shrubnet.model import AttentionUNet
 import rasterio
+import pytest
+from rasterio.errors import RasterioIOError
 
 
 def test_inference(input_image_path, tmp_path):
@@ -16,6 +18,12 @@ def test_inference(input_image_path, tmp_path):
 
     with rasterio.open(output_image_path) as out:
         assert out.transform
+
+    with pytest.raises(RasterioIOError):
+        run_inference(model, "no_image.tif", output_image_path)
+
+    with pytest.raises(RasterioIOError):
+        run_inference(model, input_image_path, "no_directory/no_image.tif")
 
 
 def test_sliding_window(input_image_path):
