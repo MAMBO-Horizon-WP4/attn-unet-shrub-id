@@ -1,8 +1,10 @@
 import torch
 import numpy as np
 import rasterio
+from rasterio.errors import RasterioIOError
 from torchvision.transforms.functional import to_tensor
 import cv2
+import logging
 
 
 def sliding_window(image, step_size, window_size):
@@ -46,10 +48,14 @@ def run_inference(
     model.eval()
     model.to(device)
 
-    with rasterio.open(input_image_path) as src:
-        output_meta = src.meta
-        output_meta["count"] = 1
-        images = src.read()
+    try:
+        with rasterio.open(input_image_path) as src:
+            output_meta = src.meta
+            output_meta["count"] = 1
+            images = src.read()
+    except RasterioIOError as err:
+        logging.error(err)
+        raise
 
     # TODO check what normalisation / standardisation was used for training!
     images = images / 255.0  # Normalize
@@ -87,6 +93,10 @@ def run_inference(
             end="\r",
         )
 
-    with rasterio.open(output_image_path, "w", **output_meta) as dst:
-        dst.write(stitched_image, 1)
-        print(f"Prediction saved to {output_image_path}")
+    try:
+        with rasterio.open(output_image_path, "w", **output_meta) as dst:
+            dst.write(stitched_image, 1)
+            print(f"Prediction saved to {output_image_path}")
+    except RasterioIOError as err:
+        logging.error(err)
+        raise

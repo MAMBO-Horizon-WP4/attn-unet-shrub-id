@@ -14,9 +14,12 @@ dependencies = [
     "torchvision",
     "numpy",
     "scikit-learn",
+    "shapely",
     "tqdm",
     "rasterio",
-    "opencv-python"
+    "opencv-python",
+    "matplotlib",
+    "geopandas"
 ]
 
 [project.optional-dependencies]
