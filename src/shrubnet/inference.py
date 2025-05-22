@@ -6,6 +6,14 @@ import cv2
 
 
 def sliding_window(image, step_size, window_size):
+    """
+    Given an input image (numpy ndarray) return a generator of windows in it
+
+    Args:
+        image: np.ndarray of raster data
+        step_size (tuple): Step size for sliding (dy, dx).
+        window_size (tuple): Size of the sliding window (h, w).
+    """
     for y in range(0, image.shape[1] - window_size[1] + 1, step_size[1]):
         for x in range(0, image.shape[2] - window_size[0] + 1, step_size[0]):
             yield (x, y, image[:, y : y + window_size[1], x : x + window_size[0]])
