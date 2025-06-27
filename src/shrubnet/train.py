@@ -17,7 +17,8 @@ def train_model(
     accumulation_steps=4,
     device="cpu",
     model_dir="model_states",
-    summary_writer=None,
+    train_summary_writer=None,
+    val_summary_writer=None,
 ):
     """
     Train the Attention UNet model.
@@ -31,6 +32,8 @@ def train_model(
         lr (float): Learning rate for the optimizer.
         accumulation_steps (int): Number of steps for gradient accumulation.
         device (str): Device to use for training ("cpu" or "cuda").
+        train_summary_writer (torch.utils.tensorboard.SummaryWriter, optional): TensorBoard writer for training metrics.
+        val_summary_writer (torch.utils.tensorboard.SummaryWriter, optional): TensorBoard writer for validation metrics.
 
     Returns:
         torch.nn.Module: The trained model.
@@ -97,11 +100,11 @@ def train_model(
             progress_bar.set_postfix({"loss": loss.item(), "accuracy": acc})
 
             # write to TensorBoard if summary_writer is provided
-            if summary_writer:
-                summary_writer.add_scalar(
+            if train_summary_writer:
+                train_summary_writer.add_scalar(
                     "Training Loss", loss.item(), epoch * len(train_loader) + i
                 )
-                summary_writer.add_scalar(
+                train_summary_writer.add_scalar(
                     "Training Accuracy", acc, epoch * len(train_loader) + i
                 )
 
@@ -120,6 +123,25 @@ def train_model(
             f"Precision = {val_precision:.4f}, Recall = {val_recall:.4f}, "
             f"F1 = {val_f1:.4f}, IoU = {val_iou:.4f}"
         )
+        if val_summary_writer:
+            val_summary_writer.add_scalar(
+                "Validation Loss", val_loss, epoch
+            )
+            val_summary_writer.add_scalar(
+                "Validation Accuracy", val_acc, epoch
+            )
+            val_summary_writer.add_scalar(
+                "Validation Precision", val_precision, epoch
+            )
+            val_summary_writer.add_scalar(
+                "Validation Recall", val_recall, epoch
+            )
+            val_summary_writer.add_scalar(
+                "Validation F1 Score", val_f1, epoch
+            )
+            val_summary_writer.add_scalar(
+                "Validation IoU", val_iou, epoch
+            )
 
         # Save the best model
         if val_loss < best_val_loss:
