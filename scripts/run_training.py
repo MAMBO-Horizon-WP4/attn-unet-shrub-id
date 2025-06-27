@@ -1,15 +1,10 @@
-import sys
-import os
-
-# Add the parent folder of the scripts directory to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
-
 import argparse
 import torch
 from torch.utils.data import random_split
 from shrubnet.model import AttentionUNet
 from shrubnet.dataset import RSDataset
 from shrubnet.train import train_model
+
 
 def main(args):
     # Load dataset
@@ -30,10 +25,11 @@ def main(args):
     # Load pretrained weights if provided
     if args.model_path:
         print(f"Loading model weights from {args.model_path}")
-        checkpoint = torch.load(args.model_path, 
-                                map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")
-                                )
-        model.load_state_dict(checkpoint)  
+        checkpoint = torch.load(
+            args.model_path,
+            map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        )
+        model.load_state_dict(checkpoint)
 
     # Train the model
     trained_model = train_model(
@@ -51,17 +47,37 @@ def main(args):
     torch.save(trained_model.state_dict(), args.output_path)
     print(f"Model saved to {args.output_path}")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train Attention UNet")
     parser.add_argument("--images_dir", required=True, help="Path to images directory")
     parser.add_argument("--labels_dir", required=True, help="Path to labels directory")
-    parser.add_argument("--output_path", default="att_unet_trained.pth", help="Path to save the trained model")
-    parser.add_argument("--model_path", default=None, help="Path to pre-existing trained model (if desired)")
-    parser.add_argument("--epochs", type=int, default=50, help="Number of training epochs")
+    parser.add_argument(
+        "--output_path",
+        default="att_unet_trained.pth",
+        help="Path to save the trained model",
+    )
+    parser.add_argument(
+        "--model_path",
+        default=None,
+        help="Path to pre-existing trained model (if desired)",
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=50, help="Number of training epochs"
+    )
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
-    parser.add_argument("--learning_rate", type=float, default=0.0001, help="Learning rate")
-    parser.add_argument("--accumulation_steps", type=int, default=4, help="Steps for gradient accumulation")
-    parser.add_argument("--max_samples", type=int, help="Maximum number of samples to load")
+    parser.add_argument(
+        "--learning_rate", type=float, default=0.0001, help="Learning rate"
+    )
+    parser.add_argument(
+        "--accumulation_steps",
+        type=int,
+        default=4,
+        help="Steps for gradient accumulation",
+    )
+    parser.add_argument(
+        "--max_samples", type=int, help="Maximum number of samples to load"
+    )
 
     args = parser.parse_args()
     main(args)

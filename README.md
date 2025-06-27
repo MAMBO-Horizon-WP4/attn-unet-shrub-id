@@ -146,3 +146,8 @@ pip install -r requirements.txt
 - Add multi-class segmentation support.
 - Integrate pre-trained models for faster convergence.
 - Visualize training and inference results with TensorBoard or Matplotlib.
+
+## Contributors
+
+* [Rafael Barbedo](https://github.com/barbedorafael)
+* [Jo Walsh](https://github.com/metazool)

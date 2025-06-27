@@ -48,6 +48,9 @@ def train_model(
 
     # Initialize variables to track the best validation performance
     best_val_loss = float("inf")
+
+    if not Path(model_dir).exists():
+        Path(model_dir).mkdir(parents=True, exist_ok=True)
     best_model_path = Path(model_dir) / "best_model.pth"
 
     # Training loop
