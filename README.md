@@ -1,6 +1,9 @@
 # Attention UNet for Semantic Segmentation
 
-This repository provides a PyTorch implementation of the Attention UNet architecture, designed for semantic segmentation tasks. It supports flexible training, inference on large images, and fine-tuning with additional datasets.
+This repository provides a PyTorch implementation of the Attention UNet architecture, designed for semantic segmentation tasks.
+
+* [workshops](https://github.com/MAMBO-Horizon-WP4/workshops/) repository contains walkthrough notebooks showing re-use of the code to create a shrub identification model.
+* [shrub-prepro](https://github.com/MAMBO-Horizon-WP4/shrub-prepro) repository contains data preparation code for creating training data for this model, also shown in the notebooks. 
 
 ## Table of Contents
 - [Features](#features)
@@ -16,14 +19,6 @@ This repository provides a PyTorch implementation of the Attention UNet architec
 
 ---
 
-## Features
-- **Attention UNet architecture**: Implements the Attention UNet model to focus on important regions of an image.
-- **Tile-based inference**: Enables predictions on large images using a sliding window approach.
-- **Incremental training**: Fine-tune the model with new datasets without starting from scratch.
-- **Customizable pipeline**: Easily adapt dataset preparation, model parameters, and metrics.
-
----
-
 ## Installation
 
 1. Clone the repository:
@@ -32,13 +27,18 @@ This repository provides a PyTorch implementation of the Attention UNet architec
    cd attention-unet
    ```
 
-2. Install dependencies:
+2. Create a virtual environment:
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+  ```
+    python -m venv .venv
+  ```
 
-3. Verify PyTorch is installed and GPU is accessible (if available):
+3. Load the environment, install package + dependencies
+
+  ```
+    source .venv/bin/activate
+    pip install -e .
+```
 
 ## Usage
 
@@ -95,23 +95,25 @@ python scripts/run_inference.py \
 The project is structured as follows:
 
 ```
-attention-unet/
-├── src/
-│   ├── dataset.py         # Dataset handling
-│   ├── model.py           # Attention UNet model
-│   ├── train.py           # Training logic
-│   ├── inference.py       # Inference logic
-│   ├── utils.py           # Helper functions (e.g., metrics)
-├── scripts/
-│   ├── run_training.py    # Training script
-│   ├── run_inference.py   # Inference script
-├── data/                  # Folder for storing datasets (not included)
-├── notebooks/             # Jupyter notebooks for experiments
-├── tests/                 # Unit and integration tests
-├── README.md              # Project documentation
-├── requirements.txt       # Dependencies
-```
-
+├── scripts
+│   ├── run_inference.py
+│   └── run_training.py
+├── src
+│   └── shrubnet
+│       ├── dataset.py
+│       ├── inference.py
+│       ├── __init__.py
+│       ├── model.py
+│       ├── train.py
+│       └── utils.py
+└── tests
+    ├── conftest.py
+    ├── data
+    │   ├── test_input.tif
+    │   └── test_mask.tif
+    ├── test_inference.py
+    ├── test_model.py
+    └── test_util.py
 ---
 
 ## Requirements
