@@ -17,6 +17,7 @@ def train_model(
     accumulation_steps=4,
     device="cpu",
     model_dir="model_states",
+    summary_writer=None,
 ):
     """
     Train the Attention UNet model.
@@ -94,6 +95,15 @@ def train_model(
             epoch_loss += loss.item()
             acc = calculate_accuracy(outputs, labels)
             progress_bar.set_postfix({"loss": loss.item(), "accuracy": acc})
+
+            # write to TensorBoard if summary_writer is provided
+            if summary_writer:
+                summary_writer.add_scalar(
+                    "Training Loss", loss.item(), epoch * len(train_loader) + i
+                )
+                summary_writer.add_scalar(
+                    "Training Accuracy", acc, epoch * len(train_loader) + i
+                )
 
         # Learning rate scheduler step
         scheduler.step()
