@@ -124,24 +124,12 @@ def train_model(
             f"F1 = {val_f1:.4f}, IoU = {val_iou:.4f}"
         )
         if val_summary_writer:
-            val_summary_writer.add_scalar(
-                "Validation Loss", val_loss, epoch
-            )
-            val_summary_writer.add_scalar(
-                "Validation Accuracy", val_acc, epoch
-            )
-            val_summary_writer.add_scalar(
-                "Validation Precision", val_precision, epoch
-            )
-            val_summary_writer.add_scalar(
-                "Validation Recall", val_recall, epoch
-            )
-            val_summary_writer.add_scalar(
-                "Validation F1 Score", val_f1, epoch
-            )
-            val_summary_writer.add_scalar(
-                "Validation IoU", val_iou, epoch
-            )
+            val_summary_writer.add_scalar("Validation Loss", val_loss, epoch)
+            val_summary_writer.add_scalar("Validation Accuracy", val_acc, epoch)
+            val_summary_writer.add_scalar("Validation Precision", val_precision, epoch)
+            val_summary_writer.add_scalar("Validation Recall", val_recall, epoch)
+            val_summary_writer.add_scalar("Validation F1 Score", val_f1, epoch)
+            val_summary_writer.add_scalar("Validation IoU", val_iou, epoch)
 
         # Save the best model
         if val_loss < best_val_loss:
