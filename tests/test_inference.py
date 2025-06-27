@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from shrubnet.inference import run_inference, sliding_window
 from shrubnet.model import AttentionUNet
 import rasterio

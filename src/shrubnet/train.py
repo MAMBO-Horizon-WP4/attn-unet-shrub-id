@@ -1,4 +1,5 @@
 import torch
+from pathlib import Path
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.optim as optim
@@ -15,6 +16,7 @@ def train_model(
     lr=0.0001,
     accumulation_steps=4,
     device="cpu",
+    model_dir="model_states",
 ):
     """
     Train the Attention UNet model.
@@ -46,7 +48,7 @@ def train_model(
 
     # Initialize variables to track the best validation performance
     best_val_loss = float("inf")
-    best_model_path = "model_states/best_model.pth"
+    best_model_path = Path(model_dir) / "best_model.pth"
 
     # Training loop
     for epoch in range(epochs):
