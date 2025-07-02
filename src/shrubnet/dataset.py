@@ -53,7 +53,7 @@ class RSDataset(Dataset):
         # Handle negative images by checking the filename (fragile)
         # Avoid having hundreds of static blank labels, just one that we reuse
         if "negative" in image_path:
-            label_path = os.path.join(self.labels_dir, "negative.tif")
+            label_path = os.path.join(self.labels_dir, "negative_0.tif")
         else:
             label_path = os.path.join(self.labels_dir, self.label_files[base_idx])
 
