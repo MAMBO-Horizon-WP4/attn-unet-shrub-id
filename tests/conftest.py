@@ -18,3 +18,13 @@ def input_image_path(fixture_dir):
 @pytest.fixture
 def mask_path(fixture_dir):
     return os.path.join(fixture_dir, "test_mask.tif")
+
+
+@pytest.fixture
+def images_dir(fixture_dir):
+    return os.path.join(fixture_dir, "sample/images")
+
+
+@pytest.fixture
+def labels_dir(fixture_dir):
+    return os.path.join(fixture_dir, "sample/labels")
