@@ -10,6 +10,7 @@ description = "Training and reusing an Attention Unet to extract shrub outlines 
 readme = "README.md"
 dependencies = [
     "s3fs",
+    "albumentations",
     "tensorflow",
     "tensorboard",
     "torch",
