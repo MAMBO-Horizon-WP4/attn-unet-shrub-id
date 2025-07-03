@@ -54,7 +54,7 @@ class RSDataset(Dataset):
         if "negative" in image_path:
             label_path = os.path.join(self.labels_dir, "negative_0.tif")
         else:
-            label_image = self.image_files[base_idx].replace('images','labels')
+            label_image = self.image_files[base_idx].replace("images", "labels")
             label_path = os.path.join(self.labels_dir, label_image)
 
         image = np.array(Image.open(image_path).convert("RGB"))
