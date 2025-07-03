@@ -22,10 +22,9 @@ class RSDataset(Dataset):
         self.augment = augment
         self.repeat_augmentations = repeat_augmentations
         self.image_files = sorted(os.listdir(images_dir))
-        self.label_files = sorted(os.listdir(labels_dir))
+
         if max_samples:
             self.image_files = self.image_files[:max_samples]
-            self.label_files = self.label_files[:max_samples]
 
         # Define albumentations augmentation pipeline
         if self.augment:
@@ -55,7 +54,8 @@ class RSDataset(Dataset):
         if "negative" in image_path:
             label_path = os.path.join(self.labels_dir, "negative_0.tif")
         else:
-            label_path = os.path.join(self.labels_dir, self.label_files[base_idx])
+            label_image = self.image_files[base_idx].replace('images','labels')
+            label_path = os.path.join(self.labels_dir, label_image)
 
         image = np.array(Image.open(image_path).convert("RGB"))
         label = np.array(Image.open(label_path).convert("L"))
