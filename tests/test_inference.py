@@ -7,7 +7,6 @@ from rasterio.errors import RasterioIOError
 
 
 def test_inference(input_image_path, tmp_path):
-
     # Empty model, random weights
     model = AttentionUNet()
     output_image_path = tmp_path / "test.tif"
