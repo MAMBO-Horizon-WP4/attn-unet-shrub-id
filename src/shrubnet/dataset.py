@@ -51,34 +51,23 @@ class RSDataset(Dataset):
         label_image = self.image_files[base_idx].replace("images", "labels")
         label_path = os.path.join(self.labels_dir, label_image)
 
-        image = np.array(Image.open(image_path).convert("RGB"))
-        label = np.array(Image.open(label_path).convert("L"))
-
-        # Normalize image to [0, 1] and ensure float32 type
-        image = (image / 255.0).astype(np.float32)
-
-        # Normalize label to [0, 1] and ensure float32 type
-        if label.max() == 255:
-            label = (label / 255.0).astype(np.float32)
-        else:
-            label = label.astype(np.float32)
+        image = np.array(Image.open(image_path).convert("RGB"), dtype=np.float32) / 255
+        label = np.array(Image.open(label_path).convert("L")) / 255
 
         # Add channel dimension to label
         label = np.expand_dims(label, axis=0)
 
-        # Adjust the dimensions of the image to [channels, height, width]
-        image = np.transpose(image, (2, 0, 1))
-
-        # Albumentations expects [H, W, C], so transpose back for augmentation
         if self.aug:
-            image_aug = np.transpose(image, (1, 2, 0))
-            label_aug = np.transpose(label, (1, 2, 0))
-            augmented = self.aug(image=image_aug, mask=label_aug)
-            image = np.transpose(augmented["image"], (2, 0, 1))
-            label = np.transpose(augmented["mask"], (2, 0, 1))
+            augmented = self.aug(image=image, mask=label)
+            assert "image" in augmented
+            image = augmented["image"]
+            label = augmented["mask"]
 
         if self.transform:
             image = self.transform(image)
+
+        # Adjust the dimensions of the image to [channels, height, width]
+        image = np.transpose(image, (2, 0, 1))
 
         image = torch.tensor(image, dtype=torch.float32)
         label = torch.tensor(label, dtype=torch.float32)
