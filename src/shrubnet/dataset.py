@@ -49,13 +49,8 @@ class RSDataset(Dataset):
         base_idx = idx % len(self.image_files)
         image_path = os.path.join(self.images_dir, self.image_files[base_idx])
 
-        # Handle negative images by checking the filename (fragile)
-        # Avoid having hundreds of static blank labels, just one that we reuse
-        if "negative" in image_path:
-            label_path = os.path.join(self.labels_dir, "negative_0.tif")
-        else:
-            label_image = self.image_files[base_idx].replace("images", "labels")
-            label_path = os.path.join(self.labels_dir, label_image)
+        label_image = self.image_files[base_idx].replace("images", "labels")
+        label_path = os.path.join(self.labels_dir, label_image)
 
         image = np.array(Image.open(image_path).convert("RGB"))
         label = np.array(Image.open(label_path).convert("L"))
