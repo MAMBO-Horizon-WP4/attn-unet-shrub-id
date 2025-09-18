@@ -79,7 +79,6 @@ class RSDataset(Dataset):
 
         if self.transform:
             image = self.transform(image)
-            label = self.transform(label)
 
         image = torch.tensor(image, dtype=torch.float32)
         label = torch.tensor(label, dtype=torch.float32)
