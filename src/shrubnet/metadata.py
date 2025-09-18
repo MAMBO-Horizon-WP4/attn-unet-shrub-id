@@ -9,7 +9,8 @@ from shrubnet.dataset import RSDataset
 def means_and_stds(images_dir: str, labels_dir: str):
     """Load the whole dataset up as one image batch.
     Return per-band mean and standard deviation pixel values.
-    https://www.codegenes.net/blog/dataloader-pytorch-mean-std-norm/ - friendly overview"""
+    https://www.codegenes.net/blog/dataloader-pytorch-mean-std-norm/ - friendly overview
+    """
     dataset = RSDataset(images_dir=images_dir, labels_dir=labels_dir)
     dataloader = DataLoader(dataset, batch_size=len(dataset), shuffle=False)
     # Get the images (index 0) from the giant batch
