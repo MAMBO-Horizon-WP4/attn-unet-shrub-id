@@ -28,7 +28,6 @@ class RSDataset(Dataset):
 
         # Define albumentations augmentation pipeline
         if self.augment:
-
             self.aug = A.OneOf(
                 [
                     A.Rotate(limit=5, p=0.5),  # Small rotation, no flip
