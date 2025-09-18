@@ -2,6 +2,7 @@ import os
 import torch
 from torch.utils.data import Dataset
 import numpy as np
+from pathlib import Path
 from PIL import Image
 import albumentations as A
 
@@ -12,19 +13,21 @@ class RSDataset(Dataset):
         images_dir,
         labels_dir,
         transform=None,
-        max_samples=None,
         augment=False,
         repeat_augmentations=1,
     ):
-        self.images_dir = images_dir
-        self.labels_dir = labels_dir
+        self.images_dir = Path(images_dir)
+        self.images = os.listdir(images_dir)
+        self.labels_dir = Path(labels_dir)
+        self.labels = os.listdir(labels_dir)
         self.transform = transform
         self.augment = augment
         self.repeat_augmentations = repeat_augmentations
-        self.image_files = sorted(os.listdir(images_dir))
 
-        if max_samples:
-            self.image_files = self.image_files[:max_samples]
+        self.image_files = [
+            f for f in os.listdir(images_dir) if f.lower().endswith((".tif"))
+        ]
+        self.image_files.sort()
 
         # Define albumentations augmentation pipeline
         if self.augment:
@@ -42,34 +45,29 @@ class RSDataset(Dataset):
             self.aug = None
 
     def __len__(self):
-        return len(self.image_files) * self.repeat_augmentations
+        return len(self.image_files) * (1 + self.repeat_augmentations)
 
     def __getitem__(self, idx):
-        base_idx = idx % len(self.image_files)
-        image_path = os.path.join(self.images_dir, self.image_files[base_idx])
+        base_image_idx = idx // (1 + self.repeat_augmentations)
+        is_augmented = (idx % (1 + self.repeat_augmentations)) > 0
 
-        label_image = self.image_files[base_idx].replace("images", "labels")
-        label_path = os.path.join(self.labels_dir, label_image)
+        image_path = str(self.images_dir / self.image_files[base_image_idx])
+        label_path = image_path.replace("images", "labels")
 
-        image = np.array(Image.open(image_path).convert("RGB"), dtype=np.float32) / 255
-        label = np.array(Image.open(label_path).convert("L")) / 255
+        image = (
+            np.array(Image.open(image_path).convert("RGB"), dtype=np.float32) / 255.0
+        )
+        label = np.array(Image.open(label_path).convert("L")) / 255.0
 
-        # Add channel dimension to label
-        label = np.expand_dims(label, axis=0)
-
-        if self.aug:
+        if is_augmented and self.aug:
             augmented = self.aug(image=image, mask=label)
             assert "image" in augmented
             image = augmented["image"]
             label = augmented["mask"]
 
-        if self.transform:
-            image = self.transform(image)
+        image = self.transform(image)
+        # Add channel dimension to label
+        label = np.expand_dims(label, axis=0)
 
-        # Adjust the dimensions of the image to [channels, height, width]
-        image = np.transpose(image, (2, 0, 1))
-
-        image = torch.tensor(image, dtype=torch.float32)
         label = torch.tensor(label, dtype=torch.float32)
-
         return image, label
