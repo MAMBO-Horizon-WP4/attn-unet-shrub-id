@@ -1,10 +1,14 @@
 import os
 import torch
 from torch.utils.data import Dataset
+from torchvision import transforms
 import numpy as np
 from pathlib import Path
 from PIL import Image
 import albumentations as A
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 class RSDataset(Dataset):
@@ -14,13 +18,18 @@ class RSDataset(Dataset):
         labels_dir,
         transform=None,
         augment=False,
-        repeat_augmentations=1,
+        repeat_augmentations=0,
     ):
         self.images_dir = Path(images_dir)
         self.images = os.listdir(images_dir)
         self.labels_dir = Path(labels_dir)
         self.labels = os.listdir(labels_dir)
         self.transform = transform
+
+        # Add a default transform
+        if not self.transform:
+            self.transform = transforms.ToTensor()
+
         self.augment = augment
         self.repeat_augmentations = repeat_augmentations
 
@@ -48,10 +57,17 @@ class RSDataset(Dataset):
         return len(self.image_files) * (1 + self.repeat_augmentations)
 
     def __getitem__(self, idx):
-        base_image_idx = idx // (1 + self.repeat_augmentations)
-        is_augmented = (idx % (1 + self.repeat_augmentations)) > 0
+        logging.debug(f"index is {idx}")
+
+        if self.aug:
+            base_image_idx = idx // (1 + self.repeat_augmentations)
+            is_augmented = (idx % (1 + self.repeat_augmentations)) > 0
+        else:
+            is_augmented = False
+            base_image_idx = idx
 
         image_path = str(self.images_dir / self.image_files[base_image_idx])
+        logging.debug(f"path is {image_path}")
         label_path = image_path.replace("images", "labels")
 
         image = (

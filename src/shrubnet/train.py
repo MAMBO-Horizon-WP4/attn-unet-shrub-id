@@ -123,6 +123,7 @@ def train_model(
             f"Precision = {val_precision:.4f}, Recall = {val_recall:.4f}, "
             f"F1 = {val_f1:.4f}, IoU = {val_iou:.4f}"
         )
+
         if val_summary_writer:
             val_summary_writer.add_scalar("Validation Loss", val_loss, epoch)
             val_summary_writer.add_scalar("Validation Accuracy", val_acc, epoch)
@@ -130,6 +131,9 @@ def train_model(
             val_summary_writer.add_scalar("Validation Recall", val_recall, epoch)
             val_summary_writer.add_scalar("Validation F1 Score", val_f1, epoch)
             val_summary_writer.add_scalar("Validation IoU", val_iou, epoch)
+
+        # TODO - add image logging to validation
+        # Write to Tensorboard if present, filesystem if not
 
         # Save the best model
         if val_loss < best_val_loss:
